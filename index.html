@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전주 최씨 이야기 - 인포그래픽</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f8f8;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a2b49;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: #3b82f6;
+            border-radius: 2px;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+            border: 3px solid #bfdbfe;
+        }
+        .timeline-content {
+            flex-grow: 1;
+            padding: 1rem 1.5rem;
+            background-color: #e0f2fe;
+            border-radius: 8px;
+            border-left: 5px solid #3b82f6;
+        }
+        .person-card {
+            display: flex;
+            align-items: center;
+            background-color: #e0f2fe;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: background-color 0.3s ease;
+        }
+        .person-card:hover {
+            background-color: #bfdbfe;
+        }
+        .person-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #3b82f6;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+        .person-info h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1a2b49;
+            margin-bottom: 0.25rem;
+        }
+        .person-info p {
+            font-size: 0.95rem;
+            color: #4b5563;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .stat-item {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            border-bottom: 5px solid #3b82f6;
+            transition: transform 0.3s ease;
+        }
+        .stat-item:hover {
+            transform: translateY(-3px);
+        }
+        .stat-item h4 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+        .stat-item p {
+            font-size: 1.1rem;
+            color: #4b5563;
+            font-weight: 500;
+        }
+        .chart-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            background-color: #1a2b49;
+            color: #e0f2fe;
+            border-radius: 12px 12px 0 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 2rem;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .timeline-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .timeline-dot {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            .timeline-content {
+                width: 100%;
+                border-left: none;
+                border-top: 5px solid #3b82f6;
+            }
+            .person-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            .person-avatar {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container">
+        <header class="text-center py-8">
+            <h1 class="text-5xl font-extrabold text-blue-800 mb-4">전주 최씨 이야기</h1>
+            <p class="text-xl text-gray-600">자랑스러운 조상들의 발자취</p>
+        </header>
+
+        <!-- 최씨의 기원 -->
+        <section class="my-12">
+            <h2 class="section-title">최씨의 기원</h2>
+            <div class="card">
+                <p class="text-lg mb-4">
+                    최씨는 한국에서 가장 오래된 토착 성씨 중 하나로, <b>삼국사기 신라 건국기사</b>에 따르면 본래 <b>고조선 유민</b>이었습니다.
+                    위만조선이 중국 한나라의 침략으로 멸망한 후, 경주시 지역으로 남아 <b>박혁거세를 왕으로 추대</b>해 신라를 건국한 6촌에 각각 성씨를 내렸습니다.
+                </p>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="font-semibold text-blue-700">6촌에 내린 성씨:</p>
+                    <ul class="list-disc list-inside text-gray-700">
+                        <li><b>최(崔)씨</b>: 고어촌에 내린 성씨, 고어촌장 <b>소벌도리</b>가 시조</li>
+                        <li>이(李)씨</li>
+                        <li>정(鄭)씨</li>
+                        <li>손(孫)씨</li>
+                        <li>배(裵)씨</li>
+                        <li>설(薛)씨</li>
+                    </ul>
+                    <p class="text-sm mt-2 text-gray-600">
+                        소벌도리는 박혁거세를 10대가 될 때까지 양육하여, 사로국 6촌장 중 가장 큰 공을 세웠기에 유리 이사금이 특별히 '최(崔)' 성을 하사했습니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 최씨의 분관 -->
+        <section class="my-12">
+            <h2 class="section-title">최씨의 분관(分貫)</h2>
+            <div class="card">
+                <p class="text-lg mb-4">
+                    최씨의 기원은 신라 초 소벌도리이지만, 실질적인 시조는 통일신라 말의 학자이자 소벌도리의 24대손인 <b>최치원(崔致遠, 857년생)</b>입니다.
+                    경주 최씨의 시조가 최치원이며, 최치원의 손자인 최승로의 후손에서 많은 분가가 이루어졌습니다.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-green-50 p-4 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-xl text-green-700 mb-2">소벌도리 계열 (위만조선)</h3>
+                        <ul class="list-disc list-inside text-gray-700">
+                            <li>개성 최씨</li>
+                            <li>삭녕 최씨</li>
+                            <li>동주 최씨</li>
+                            <li>우봉 최씨</li>
+                            <li>전주 최씨 (최군옥계)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg shadow-sm">
+                        <h3 class="font-bold text-xl text-purple-700 mb-2">최치원 계열 (신라 47대 헌안왕)</h3>
+                        <ul class="list-disc list-inside text-gray-700">
+                            <li>경주 최씨</li>
+                            <li>예주 최씨</li>
+                            <li>진주 최씨</li>
+                            <li>탐진 최씨</li>
+                        </ul>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg shadow-sm col-span-1 md:col-span-2">
+                        <h3 class="font-bold text-xl text-red-700 mb-2">최언위 계열 (신라 56대 경순왕)</h3>
+                        <ul class="list-disc list-inside text-gray-700">
+                            <li><b>전주 최씨 (최순작계, 최균계)</b></li>
+                            <li>강릉 최씨</li>
+                            <li>청주 최씨</li>
+                            <li>승주 최씨</li>
+                        </ul>
+                        <p class="text-sm mt-2 text-gray-600">
+                            신라 멸망 후 경주에서 완산(전주)으로 넘어왔으며, 최씨로서는 최초로 완산에 살게 되었고, 완산개국백에 봉해졌습니다.
+                            조선 태종 때부터 '전주'라 불리게 되었습니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 전주 최씨 문열공파 계보 (중시조) -->
+        <section class="my-12">
+            <h2 class="section-title">전주 최씨 중시조: 문열공 최순작</h2>
+            <div class="card">
+                <p class="text-lg mb-4">
+                    전주 최씨 연원보에 따르면 전주 최씨는 4개 종파로 나뉘지만, <b>문열공 최순작(崔純爵)</b>을 1세조(중시조)로 하는 문열공파가 세계(世系)를 이어오고 있습니다.
+                    이는 목은 이색이 세대가 불분명한 기존 시조(최언휘) 대신 뚜렷하고 가장 가까운 조상을 시조로 삼도록 권유했기 때문입니다.
+                </p>
+                <div class="bg-yellow-50 p-4 rounded-lg shadow-sm mb-6">
+                    <h3 class="font-bold text-xl text-yellow-700 mb-2">주요 전주 최씨 4대 종파</h3>
+                    <ul class="list-disc list-inside text-gray-700">
+                        <li><b>최순작(崔純爵)</b>을 시조로 하는 <b>문열공파(文烈公派)</b>: 고려 숙종 때 병부상서, 신호위상장군, 완산부개국백. 시호 '문열'.</li>
+                        <li><b>최군옥(崔群玉)</b>을 시조로 하는 <b>문충공파(文忠公派)</b>: 고려 때 문하시랑평장사, 완산부원군.</li>
+                        <li><b>최균(崔均)</b>을 시조로 하는 <b>사도공파(司徒公派)</b> 또는 복야공계: 고려 인종 때 문과 급제, 서경유수 조위총의 난에 순절, 완산군에 추봉.</li>
+                        <li><b>최아(崔阿)</b>를 시조로 하는 <b>문성공파(文成公派)</b>: 충숙왕 때 문하시중, 완산군에 봉함.</li>
+                    </ul>
+                </div>
+
+                <h3 class="text-2xl font-bold text-blue-800 mb-4 text-center">문열공 최순작 이후 주요 인물 (일부 발췌)</h3>
+                <div class="space-y-4">
+                    <div class="person-card">
+                        <div class="person-avatar">1세</div>
+                        <div class="person-info">
+                            <h3>최순작 (崔純爵, 문열공)</h3>
+                            <p>고려 정종 때 문과 급제, 숙종 때 병부상서, 신호위상장군. 완주백에 봉해지고 시호 '문열' 받음.</p>
+                        </div>
+                    </div>
+                    <div class="person-card">
+                        <div class="person-avatar">2세</div>
+                        <div class="person-info">
+                            <h3>최숭 (崔崇)</h3>
+                            <p>고려 숙종 때 문과 급제, 예종 때 이부상서 역임.</p>
+                        </div>
+                    </div>
+                    <div class="person-card">
+                        <div class="person-avatar">6세</div>
+                        <div class="person-info">
+                            <h3>최득평 (崔得枰)</h3>
+                            <p>통헌대부선부전서 역임. 불교에 귀의하여 불도에 진력.</p>
+                        </div>
+                    </div>
+                    <div class="person-card">
+                        <div class="person-avatar">7세</div>
+                        <div class="person-info">
+                            <h3>최재 (崔宰, 문정공)</h3>
+                            <p>고려 충숙왕 때 문과 급제, 지평, 전리판서 등 역임. 완산군에 제수되고 시호 '문정'. 강직한 인물.</p>
+                        </div>
+                    </div>
+                    <div class="person-card">
+                        <div class="person-avatar">8세</div>
+                        <div class="person-info">
+                            <h3>최유경 (崔有慶, 평도공)</h3>
+                            <p>조선 초 문신. 고려 공민왕 때 판도사랑, 태종 때 대사헌, 참찬의정부사. <span class="font-bold text-red-600">청백리</span>에 녹선. 남대문 준공.</p>
+                        </div>
+                    </div>
+                    <div class="person-card">
+                        <div class="person-avatar">9세</div>
+                        <div class="person-info">
+                            <h3>최사위 (崔士威, 판윤공)</h3>
+                            <p>최유경의 장남. 조선 태종 때 병조참의, 황해도관찰사. 세종 때 한성부판윤(서울시장).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 전주 최씨 인물들의 업적 (최유경 중심) -->
+        <section class="my-12">
+            <h2 class="section-title">주요 인물들의 업적</h2>
+            <div class="card">
+                <h3 class="text-2xl font-bold text-blue-800 mb-4">평도공 최유경 (崔有慶, 1343~1413)</h3>
+                <div class="timeline-container relative before:content-[''] before:absolute before:left-10 before:top-0 before:bottom-0 before:w-1 before:bg-gray-200">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h4 class="font-semibold text-lg text-blue-700">고려 공민왕 (1372년)</h4>
+                            <p class="text-gray-700">판도사랑(版圖司佐郎), 사헌부장령(司憲府掌令) 역임.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h4 class="font-semibold text-lg text-blue-700">고려 우왕 14년 (1388년)</h4>
+                            <p class="text-gray-700">요동정벌 시 서북면전운사 겸 찰방으로 위화도회군을 우왕에게 고변. 이성계의 신임을 얻어 개국원종공신에 서훈.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h4 class="font-semibold text-lg text-blue-700">조선 태조</h4>
+                            <p class="text-gray-700">경상도 도관찰사, 지중추원사, 충청도 도체찰사 역임. 여러 차례 왕의 특사로 중임을 수행.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h4 class="font-semibold text-lg text-blue-700">조선 태종</h4>
+                            <p class="text-gray-700">대사헌, 참찬의정부사, 판안성부사 역임. <span class="font-bold text-red-600">청백리(淸白吏)</span>에 녹선. 청주의 송천서원에 배향.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h4 class="font-semibold text-lg text-blue-700">조선 세종</h4>
+                            <p class="text-gray-700">효자정문을 받아 '효렴사'라 칭함. (요자로 자식의 도리를 다하고 청렴한 정치로 민생을 살핀 공덕 기림).</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h4 class="font-semibold text-lg text-blue-700">건축 및 문화재</h4>
+                            <p class="text-gray-700">축성도감(築城都監)으로 서울의 성곽과 <b>국보 1호 남대문</b>을 준공하고 전주읍성 풍남문(보물 제308호)을 건립. 남대문 상량문은 그의 친필로 중요한 문화재로 발견됨.</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-base mt-6 text-gray-700 italic">
+                    **전주 최씨 자손이 크게 번성하여 상신(相臣), 대제학(大提學), 청백리 모두가 최유경의 자손에서 나왔습니다.
+                </p>
+                <p class="text-base mt-2 text-gray-700 italic">
+                    **죽정 최유경 묘역은 경기도 문화재 120호로 격상되었습니다.
+                </p>
+            </div>
+        </section>
+
+        <!-- 조선시대 성씨별 상신 배출 현황 -->
+        <section class="my-12">
+            <h2 class="section-title">조선시대 주요 관직 배출 현황</h2>
+            <div class="card">
+                <p class="text-lg mb-4">
+                    상신(相臣)은 조선시대의 삼정승(영의정, 좌의정, 우의정)을 일컫는 말로, 국왕을 보좌하며 백관을 통솔하는 조선시대 최고의 벼슬이었습니다.
+                    조선시대 총 362명의 상신 중, <b>전주 최씨는 상신 3명, 대제학 2명, 청백리 3명, 한성판윤 5명 등 문과급제자 109명</b>을 배출하여 최씨 중 가장 많습니다.
+                </p>
+                <div class="stats-grid mt-6">
+                    <div class="stat-item">
+                        <h4>3명</h4>
+                        <p>상신 (영의정 2, 좌의정 1)</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>2명</h4>
+                        <p>대제학</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>3명</h4>
+                        <p>청백리</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>5명</h4>
+                        <p>한성판윤</p>
+                    </div>
+                    <div class="stat-item">
+                        <h4>109명</h4>
+                        <p>문과급제자</p>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-blue-800 mt-8 mb-4 text-center">전주 최씨 대표 인물</h3>
+                <div class="space-y-4">
+                    <div class="person-card">
+                        <div class="person-avatar">M</div>
+                        <div class="person-info">
+                            <h3>최명길 (崔鳴吉)</h3>
+                            <p>인조반정 1등공신, 대제학, 영의정 역임. (최유경 4아들 최사강 경절공파 8세손)</p>
+                        </div>
+                    </div>
+                    <div class="person-card">
+                        <div class="person-avatar">S</div>
+                        <div class="person-info">
+                            <h3>최석정 (崔錫鼎)</h3>
+                            <p>최명길 손자, 숙종 때 영의정 (6번 역임), 소론의 영수.</p>
+                        </div>
+                    </div>
+                    <div class="person-card">
+                        <div class="person-avatar">S</div>
+                        <div class="person-info">
+                            <h3>최석항 (崔錫恒)</h3>
+                            <p>경종 때 좌의정 역임.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-blue-800 mt-8 mb-4 text-center">조선시대 성씨별 상신 배출 순위 (일부)</h3>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <ul class="list-decimal list-inside text-gray-700 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                        <li>전주 이씨 (22명)</li>
+                        <li>안동 김씨 (19명)</li>
+                        <li>동래 정씨 (17명)</li>
+                        <li>청송 심씨 (13명)</li>
+                        <li>청주 한씨 (12명)</li>
+                        <li>여흥 민씨 (12명)</li>
+                        <li>파평 윤씨 (11명)</li>
+                        <li>달성 서씨 (9명)</li>
+                        <li>남양 홍씨 (9명)</li>
+                        <li>안동 권씨 (8명)</li>
+                        <li>경주 이씨 (8명)</li>
+                        <li>문화 류씨 (8명)</li>
+                        <li>청풍 김씨 (8명)</li>
+                        <li>연안 이씨 (8명)</li>
+                        <li>양주 조씨 (8명)</li>
+                        <li>평산 신씨 (7명)</li>
+                        <li>덕수 이씨 (7명)</li>
+                        <li>풍양 조씨 (7명)</li>
+                        <li>반남 박씨 (7명)</li>
+                        <li>연안 김씨 (6명)</li>
+                        <li>의령 남씨 (6명)</li>
+                        <li>해평 윤씨 (6명)</li>
+                        <li>경주 김씨 (6명)</li>
+                        <li>광주 이씨 (5명)</li>
+                        <li>광산 김씨 (5명)</li>
+                        <li>창녕 성씨 (5명)</li>
+                        <li>풍산 홍씨 (5명)</li>
+                        <li>연일 정씨 (5명)</li>
+                        <li>양천 허씨 (5명)</li>
+                        <li>한산 이씨 (4명)</li>
+                        <li>전의 이씨 (4명)</li>
+                        <li>진주 강씨 (4명)</li>
+                        <li><span class="font-bold text-blue-700">전주 최씨 (3명)</span></li>
+                        <!-- Add more as needed based on the provided text -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>&copy; 2025 전주 최씨 이야기. 모든 권리 보유.</p>
+        </footer>
+    </div>
+</body>
+</html>
